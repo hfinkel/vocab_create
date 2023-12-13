@@ -38,9 +38,6 @@ namespace asio = boost::asio;
 #include <boost/algorithm/string.hpp>
 namespace algo = boost::algorithm;
 
-#include <boost/container/flat_map.hpp>
-namespace cont = boost::container;
-
 #include <boost/container_hash/hash.hpp>
 
 #include <cstdint>
@@ -56,6 +53,7 @@ namespace cont = boost::container;
 #include <string>
 #include <string_view>
 #include <thread>
+#include <unordered_map>
 namespace fs = std::filesystem;
 
 namespace {
@@ -273,7 +271,7 @@ int main(int argc, char *argv[]) {
     cms substring_stats(cms_width, cms_depth);
     std::mutex substring_stats_m;
 
-    cont::flat_map<std::string, std::size_t> vocab;
+    std::unordered_map<std::string, std::size_t, boost::hash<std::string>> vocab;
     std::mutex vocab_m;
     for (int phase = 0; phase < 2; ++phase) {
       std::vector<std::future<void>> futures;
@@ -333,7 +331,7 @@ int main(int argc, char *argv[]) {
 
             cms file_substring_stats(substring_stats.get_width(),
                                      substring_stats.get_depth());
-            cont::flat_map<std::string, std::size_t> file_vocab;
+            std::unordered_map<std::string, std::size_t, boost::hash<std::string>> file_vocab;
 
             size_t word_count = 0, char_count = 0, ss_count = 0;
             auto process_word = [&](std::string_view word) {
