@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.19)
 project(vocab_create)
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(Boost 1.73.0 COMPONENTS iostreams log program_options REQUIRED)
+find_package(Boost 1.73.0 COMPONENTS container iostreams log program_options REQUIRED)
 
 INCLUDE(CheckCXXSourceCompiles)
 foreach(dt bzip2 gzip lzma zlib bzip2 zstd)
@@ -42,5 +42,5 @@ if ("${bls}" STREQUAL "${CMAKE_SHARED_LIBRARY_SUFFIX}")
   target_link_libraries(vocab_create Boost::dynamic_linking)
 endif()
 
-target_link_libraries(vocab_create Boost::iostreams Boost::log Boost::program_options)
+target_link_libraries(vocab_create Boost::container Boost::iostreams Boost::log Boost::program_options)
 
