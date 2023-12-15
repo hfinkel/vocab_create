@@ -92,7 +92,7 @@ public:
   }
 
   void keep_only_top_n(std::size_t n) {
-    std::vector<std::size_t> top_counts(depth*n);
+    std::vector<std::size_t> top_counts(n);
     std::partial_sort_copy(data.begin(), data.end(), top_counts.begin(),
                            top_counts.end(), std::greater<std::size_t>());
     std::size_t last_top_count = top_counts.back();
@@ -136,9 +136,9 @@ int main(int argc, char *argv[]) {
     ("max-tokens", po::value<std::size_t>()->
       default_value(10000), "Maximum number of tokens to generate")
     ("cms-width-factor", po::value<std::size_t>()->
-      default_value(3), "Width of the count-min sketch, multiplicative to the maximum number of tokens")
+      default_value(100), "Width of the count-min sketch, multiplicative to the maximum number of tokens")
     ("cms-depth", po::value<std::size_t>()->
-      default_value(2), "Depth of the count-min sketch")
+      default_value(3), "Depth of the count-min sketch")
     ("output-file", po::value<std::string>(), "Output file")
     ("input-directory", po::value<std::vector<std::string>>(), "Input directory");
 
