@@ -65,6 +65,15 @@ class cms {
 public:
   cms(std::size_t width, std::size_t depth) : width(width), depth(depth) {
     data.resize(width*depth);
+
+    // Compute the integer log2 of the width (there are many ways to do this,
+    // see:
+    // https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious)
+    // This way, for each has we compute, we know how many per-depth indexes we
+    // can extract from it.
+    bits_per_hash = 0;
+    for (auto w = width; w >>= 1;) ++bits_per_hash;
+    keys_per_hash = 8*sizeof(std::size_t)/++bits_per_hash;
   }
 
   void merge(const cms &other) {
@@ -73,18 +82,39 @@ public:
   }
 
   void increment_count(std::string_view key) {
+    std::size_t seed;
+    std::size_t seed_usages = 0;
     for (std::size_t d = 0; d < depth; ++d) {
-      std::size_t seed = d+1;
-      boost::hash_combine(seed, key);
+      if (!seed_usages) {
+        seed = 0;
+        boost::hash_combine(seed, d);
+        boost::hash_combine(seed, key);
+        seed_usages = keys_per_hash - 1;
+      } else {
+        seed >>= bits_per_hash;
+        --seed_usages;
+      }
+
       ++data[d*width + seed % width];
     }
   }
 
   std::size_t get_min_count(std::string_view key) const {
     std::size_t count = std::numeric_limits<std::size_t>::max();
+
+    std::size_t seed;
+    std::size_t seed_usages = 0;
     for (std::size_t d = 0; d < depth; ++d) {
-      std::size_t seed = d+1;
-      boost::hash_combine(seed, key);
+      if (!seed_usages) {
+        seed = 0;
+        boost::hash_combine(seed, d);
+        boost::hash_combine(seed, key);
+        seed_usages = keys_per_hash - 1;
+      } else {
+        seed >>= bits_per_hash;
+        --seed_usages;
+      }
+
       count = std::min(count, data[d*width + seed % width]);
     }
 
@@ -92,7 +122,7 @@ public:
   }
 
   void keep_only_top_n(std::size_t n) {
-    std::vector<std::size_t> top_counts(n);
+    std::vector<std::size_t> top_counts(depth*n);
     std::partial_sort_copy(data.begin(), data.end(), top_counts.begin(),
                            top_counts.end(), std::greater<std::size_t>());
     std::size_t last_top_count = top_counts.back();
@@ -115,6 +145,8 @@ public:
   }
 
 protected:
+  std::size_t bits_per_hash;
+  std::size_t keys_per_hash;
   std::size_t width;
   std::size_t depth;
   std::vector<std::size_t> data;
