@@ -10,7 +10,7 @@ This was inspired by reading about the [Byte Pair Encoding](https://en.wikipedia
 
 ## Usage
 
-``bash
+```bash
 $ vocab_create --log-level debug vocab.tsv /opt/data/
 
 $ vocab_create -h
@@ -37,11 +37,11 @@ with extensions: .bz2 (bzip2) .gz (gzip) .lzma (lzma) .zz (zlib)
 Note:
 Options that can be provided on the command line can also be provided in a
 configuration file. The configuration file uses a line-based 'name = value' syntax.
-``
+```
 
 The output file will look something like this:
 
-``bash
+```bash
 $ cat vocab.tsv
 _	1
 e	0.9288
@@ -77,7 +77,7 @@ iv	0.0248142
 pe	0.0247993
 ent	0.0247608
 ...
-``
+```
 
 ## Maturity and Stability
 
