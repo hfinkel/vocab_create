@@ -6,6 +6,8 @@ vocab_create is a multi-threaded C++ program to collect the most-common substrin
 
 When linking against a Boost.IOStreams build with decompression support, files can be automatically decompressed when searching for substrings. Aside from the presence of compressed files, which will be decompressed, the assumption is that all files in the provided directories are text files. Furthermore, the assumption is that all text is UTF-8 (although some effort to skip random other bytes is made).
 
+This was inspired by reading about the [Byte Pair Encoding](https://en.wikipedia.org/wiki/Byte_pair_encoding) (BPE) used by [Natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing) (NLP) techniques (including some of today's [large language models](https://en.wikipedia.org/wiki/Large_language_model) (LLMs)). However, this program does not compute a BPE. Instead, it uses a data structure known as a [count-min sketch](https://en.wikipedia.org/wiki/Count%E2%80%93min_sketch) (CMS) to directly determine the most-common substrings (up to some specified number of characters) along with their relative frequency.
+
 ## Usage
 
 ``bash
