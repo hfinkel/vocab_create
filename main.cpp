@@ -161,6 +161,7 @@ int main(int argc, char *argv[]) {
     ("filter-buffer-size", po::value<std::streamsize>()->
       default_value(32*1024), "Filter buffer size for decompression")
     ("log-level", po::value<std::string>(), "Output log level")
+    ("log-file", po::value<std::string>(), "Output log file")
     ("threads", po::value<std::size_t>(), "Number of threads")
     ("config,c", po::value<std::string>(), "Configuration file")
     ("max-token-length", po::value<std::size_t>()->
@@ -266,6 +267,14 @@ int main(int argc, char *argv[]) {
       logging::keywords::format = COMMON_FMT,
       logging::keywords::auto_flush = true
     );
+
+    if (vm.count("log-file"))
+      logging::add_file_log(
+        logging::keywords::format = COMMON_FMT,
+        logging::keywords::file_name = vm["log-file"].as<std::string>(),
+        logging::keywords::open_mode = std::ios_base::out | std::ios_base::app,
+        logging::keywords::auto_flush = true
+      );
 
     logging::add_common_attributes();
 
